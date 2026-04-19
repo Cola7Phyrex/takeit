@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f54b4b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="TakeIt" />
+    <meta
+      name="description"
+      content="TakeIt - 习惯、任务与统计的轻量级激情打卡工具"
+    />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icon.png" />
+    <link rel="icon" href="./icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>TakeIt</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero__eyebrow">TakeIt</div>
+        <div class="hero__content">
+          <div>
+            <h1>持续推进，每一次都算数</h1>
+            <p id="hero-subtitle">
+              用习惯和任务两条轨道，把你的日常冲刺感拉满。
+            </p>
+          </div>
+          <button id="install-button" class="ghost-button" hidden>安装 App</button>
+        </div>
+      </header>
+
+      <main class="main-card">
+        <section class="tabbar" aria-label="主导航">
+          <button class="tabbar__item is-active" data-tab="habits">习惯</button>
+          <button class="tabbar__item" data-tab="tasks">任务</button>
+          <button class="tabbar__item" data-tab="stats">统计</button>
+        </section>
+
+        <section class="panel is-active" id="panel-habits" data-panel="habits">
+          <div class="toolbar">
+            <label class="select-wrap">
+              <span>当前习惯</span>
+              <select id="habit-select"></select>
+            </label>
+            <div class="toolbar__actions">
+              <button class="mini-button" id="habit-add-button">新增</button>
+              <button class="mini-button" id="habit-edit-button">修改</button>
+              <button class="mini-button mini-button--danger" id="habit-delete-button">
+                删除
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-state" id="habit-empty">
+            <p>还没有习惯。先创建一个你想坚持的目标。</p>
+          </div>
+
+          <div class="content-stack" id="habit-content" hidden>
+            <section class="action-card action-card--habit">
+              <div class="action-card__split">
+                <div class="action-card__left">
+                  <p class="kicker">今日状态</p>
+                  <h2 id="habit-title">-</h2>
+                  <span class="status-pill" id="habit-today-status">未完成</span>
+                </div>
+                <div class="action-card__right">
+                  <button class="primary-button" id="habit-checkin-button">打卡</button>
+                </div>
+              </div>
+              <div class="history-strip" id="habit-history" aria-label="最近七天打卡"></div>
+              <p class="hint-text">点击补卡，但不是你偷懒的理由！</p>
+            </section>
+
+            <section class="stats-card">
+              <div class="stats-card__header">
+                <p class="kicker">阶段统计</p>
+                <h3>当前习惯表现</h3>
+              </div>
+              <div class="metric-grid" id="habit-metrics"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-tasks" data-panel="tasks">
+          <div class="toolbar">
+            <label class="select-wrap">
+              <span>当前任务</span>
+              <select id="task-select"></select>
+            </label>
+            <div class="toolbar__actions">
+              <button class="mini-button" id="task-add-button">新增</button>
+              <button class="mini-button" id="task-edit-button">修改</button>
+              <button class="mini-button mini-button--danger" id="task-delete-button">
+                删除
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-state" id="task-empty">
+            <p>还没有任务。设一个总目标，把进度推向终点。</p>
+          </div>
+
+          <div class="content-stack" id="task-content" hidden>
+            <section class="action-card action-card--task">
+              <div class="action-card__stack">
+                <p class="kicker">推进进度</p>
+                <h2 id="task-title">-</h2>
+                <span class="status-pill status-pill--hot" id="task-status">进行中</span>
+              </div>
+              <button class="primary-button" id="task-checkin-button">打卡</button>
+              <div class="progress-card">
+                <div class="progress-track" id="task-progress-track">
+                  <div class="progress-bar" id="task-progress-bar"></div>
+                  <div class="progress-glow" id="task-progress-glow"></div>
+                  <div class="progress-pointer" id="task-progress-pointer"></div>
+                </div>
+                <div class="progress-meta">
+                  <span id="task-progress-text">0/0</span>
+                  <span id="task-progress-percent">0%</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-stats" data-panel="stats">
+          <section class="stats-top">
+            <button class="mini-button" id="export-button">导出数据</button>
+            <button class="mini-button" id="import-button">导入数据</button>
+            <input id="import-input" type="file" accept="application/json" hidden />
+          </section>
+
+          <section class="summary-card">
+            <div class="summary-card__header">
+              <p class="kicker">历史纪录</p>
+              <h2>最长累计打卡</h2>
+            </div>
+            <div class="record-card">
+              <div>
+                <span class="record-card__label">习惯名称</span>
+                <strong id="best-habit-name">暂无</strong>
+              </div>
+              <div>
+                <span class="record-card__label">累计次数</span>
+                <strong id="best-habit-count">0</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="stats-card">
+            <div class="stats-card__header">
+              <p class="kicker">成就系统</p>
+              <h3>持续冲刺的里程碑</h3>
+            </div>
+            <div class="achievement-list" id="achievement-list"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="entity-dialog" class="dialog">
+      <form method="dialog" class="dialog__surface" id="entity-form">
+        <div class="dialog__header">
+          <p class="kicker" id="dialog-kicker">新增</p>
+          <h2 id="dialog-title">创建内容</h2>
+        </div>
+
+        <input type="hidden" id="dialog-kind" />
+        <input type="hidden" id="dialog-mode" />
+
+        <label class="field">
+          <span>名称</span>
+          <input id="dialog-name" name="name" type="text" maxlength="40" required />
+        </label>
+
+        <label class="field" id="dialog-target-wrap" hidden>
+          <span>总次数</span>
+          <input id="dialog-target" name="target" type="number" min="1" step="1" />
+        </label>
+
+        <div class="dialog__actions">
+          <button class="mini-button" id="dialog-cancel" type="button">取消</button>
+          <button class="primary-button primary-button--small" id="dialog-save" type="submit">
+            保存
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="metric-template">
+      <article class="metric-card">
+        <span class="metric-card__label"></span>
+        <strong class="metric-card__value"></strong>
+      </article>
+    </template>
+
+    <template id="achievement-template">
+      <article class="achievement-card">
+        <div>
+          <span class="achievement-card__state"></span>
+          <strong class="achievement-card__name"></strong>
+        </div>
+        <p class="achievement-card__desc"></p>
+        <span class="achievement-card__time"></span>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
